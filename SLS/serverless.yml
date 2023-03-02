@@ -1,5 +1,8 @@
 service: myCustomLambda
 
+plugins:
+  - serverless-step-functions
+
 provider:
   name: aws
   profile: dhawal
@@ -10,6 +13,57 @@ functions:
   myCustomLambda:
     handler: index.handler
     name: myCustomLambda
+
+stepFunctions:
+  stateMachines:
+    myStateMachine:
+      definition:
+        Comment: "My gd custom state machine"
+        StartAt: "ChoiceWho"
+        States:
+          ChoiceWho:
+            Type: Choice
+            Choices:
+            - Or:
+              - Variable: "$.who"
+                StringEquals: "gd"
+              - Variable: "$.who"
+                StringEquals: "gtl"
+              Next: CheckStep 
+            Default: DefaultAction 
+          CheckStep:
+            Type: Choice
+            Choices:
+            - Variable: "$.step"
+              StringEquals: "PLEASE_END"
+              Next: EndExecution
+            - Variable: "$.step"
+              StringEquals: "PLEASE_DELAY"
+              Next: PleaseDelay
+            Default: ExecuteStep
+          DefaultAction:
+            Type: Pass
+            Result:
+              Cause:
+                errorType: DefaultAction
+                errorMessage: Incorrect choice provided
+            ResultPath: "$.error"
+            Next: ErrorHandler
+          ErrorHandler:
+            Type: Task
+            Resource: !GetAtt myCustomLambda.Arn
+            End: true
+          PleaseDelay:
+            Type: Wait
+            TimestampPath: "$.waitTill"
+            Next: ExecuteStep
+          ExecuteStep:
+            Type: Task
+            Resource: !GetAtt myCustomLambda.Arn
+            End: true
+          EndExecution:
+            Type: Pass
+            End: true
 
 ## Only include index.js file and exclude everything else
 package:

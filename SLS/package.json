@@ -4,7 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
-    "serverless": "1.78.1"
+    "serverless": "1.78.1",
+    "serverless-step-functions": "2.17.1"
   },
   "scripts": {
     "deploy": "sls deploy"
