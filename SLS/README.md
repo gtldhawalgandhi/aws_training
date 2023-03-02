@@ -1,0 +1,3 @@
+## Serverless framework
+
+ yarn deploy

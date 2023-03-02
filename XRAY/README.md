@@ -1,0 +1,1 @@
+## Copy paste the index.js file right into Lambda to test this out.

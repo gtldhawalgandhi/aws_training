@@ -1,0 +1,66 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Lambda function for testing purpose'
+Outputs:
+  MyOutputLambdaFunction:
+    Description: 'Lambda function ARN'
+    Export:
+      Name: MyLambdaARN
+    Value:
+      Fn::GetAtt:
+        - MyLambdaExecRole
+        - Arn
+Parameters:
+  EnvName:
+    Type: String
+    Description: 'Environment name'
+    Default: dhawal
+Conditions: 
+  IsMyAccount:
+    Fn::Equals:
+    # - "true"
+    # - "true"
+    - !Sub ${AWS::AccountId}
+    - 0123456789012
+Resources:
+  MyLambdaFunction:
+      Type: AWS::Lambda::Function
+      Condition: IsMyAccount
+      Properties:
+        Handler: index.handler
+        Environment:
+          Variables:
+            KEY: VALUE
+        FunctionName:
+          Fn::Sub: 'MyLambdaFunction-${EnvName}'
+        Role:
+          Fn::GetAtt:
+            - MyLambdaExecRole
+            - Arn
+        Code:
+          ZipFile: |
+            exports.handler = function(event, context) {
+              console.log(event)
+            }
+        Runtime: nodejs14.x
+        Timeout: 5
+  MyLambdaExecRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: '*'
+                Resource: '*'
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'

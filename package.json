@@ -1,0 +1,17 @@
+{
+  "name": "xray",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.1314.0",
+    "aws-xray-sdk-core": "^3.4.1"
+  },
+  "devDependencies": {
+    "esbuild": ""
+  },
+  "scripts": {
+    "build:es": "node esbuild.config.js ES/index",
+    "run:es": "yarn build:es && node ES/index.out.js"
+  }
+}

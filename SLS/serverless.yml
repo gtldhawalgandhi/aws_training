@@ -1,0 +1,18 @@
+service: myCustomLambda
+
+provider:
+  name: aws
+  profile: dhawal
+  region: eu-west-1
+  runtime: nodejs14.x
+  
+functions:
+  myCustomLambda:
+    handler: index.handler
+    name: myCustomLambda
+
+## Only include index.js file and exclude everything else
+package:
+  exclude:
+    - "**"
+    - "!index.js"
